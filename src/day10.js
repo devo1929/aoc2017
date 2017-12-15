@@ -2,6 +2,7 @@
 const fs = require('fs');
 const input = fs.readFileSync('./inputs/day10.txt', 'utf-8');
 const _ = require('lodash');
+const knotHash = require('./service/knot-hash');
 
 const _createList = (size) => {
     let list = [];
@@ -25,14 +26,6 @@ const _reverse = (list, position, length) => {
     list = _rotate(list, position);
     Array.prototype.splice.apply(list, [0, length].concat(list.slice(0, length).reverse()));
     return _rotate(list, position, true);
-};
-
-const _xor = (array) => {
-    return array.reduce((acc, cur) => acc ^ cur);
-};
-
-const _toHex = (number) => {
-    return number.toString(16).padStart(2, '0');
 };
 
 const _traverse = (list, lengths, currentPosition = 0, skip = 0) => {
@@ -141,22 +134,7 @@ const _traverse = (list, lengths, currentPosition = 0, skip = 0) => {
  *
  * Your puzzle answer was e1462100a34221a7f0906da15c1c979a.
  */
-((lengths) => {
-    let list = _createList(256);
-    let suffix = [17, 31, 73, 47, 23];
-    lengths = lengths.split('').map(i => i.charCodeAt(0)).concat(suffix);
-    let round = {
-        list,
-        currentPosition: 0,
-        skip: 0,
-    };
-    for (let j = 0; j < 64; j++) {
-        round = _traverse(round.list, lengths, round.currentPosition, round.skip);
-    }
-    let denseHash = '';
-    for (let i = 0; i < 16; i++) {
-        denseHash += _toHex(_xor(list.slice(i * 16, (i * 16) + 16)));
-    }
-    console.log('result:', denseHash);
+((string) => {
+    console.log('result:', knotHash.hash(string));
 
 })(input.slice());
